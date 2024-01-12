@@ -1,9 +1,18 @@
+package gui;
+
+import Controllers.FileController;
+import Controllers.GuiController;
+import api.Movie;
+import api.Series;
+import api.User;
+
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import java.util.ArrayList;
 
 public class SearchResultScreen extends JFrame {
 
@@ -11,6 +20,8 @@ public class SearchResultScreen extends JFrame {
     private DefaultListModel<String> listModel;
     private JButton addToFavoriteButton, exitButton;
 
+    public static Movie currentMovieSelected;
+    public static Series currentSeriesSelected;
     public SearchResultScreen() {
         initializeUI();
     }
@@ -31,17 +42,59 @@ public class SearchResultScreen extends JFrame {
         gbc.gridheight = 4;
 
         listModel = new DefaultListModel<>();
-        listModel.addElement("Result 1");
-        listModel.addElement("Result 2");
-        listModel.addElement("Result 3");
-        listModel.addElement("Result 4");
+
+        if(SearchForm.movies != null){
+//            Show movies
+
+            for(Movie movie : SearchForm.movies){
+                listModel.addElement(movie.getTitle());
+            }
+
+        }
+        else if (SearchForm.series != null){
+//            Show Series
+            for(Series series : SearchForm.series){
+                listModel.addElement(series.getTitle());
+            }
+        }
+
 
         resultList = new JList<>(listModel);
         resultList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         resultList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                // Handle selection change if needed
+                // Handle selection change
+                if (!e.getValueIsAdjusting()) {
+                    // Retrieve the selected value
+                    String selectedValue = resultList.getSelectedValue();
+
+                    if( SearchForm.movies != null){
+                        for(Movie movie : SearchForm.movies) {
+                            if (movie.getTitle().equals(selectedValue)) {
+
+                                if(GuiController.reviewRatingForm == null){
+                                    SearchResultScreen.currentMovieSelected = movie;
+                                    GuiController.showReviewRatingForm(true);
+
+                                    GuiController.showViewContentScreen(true);
+                                }
+                            }
+                        }
+                    }else if (SearchForm.series != null){
+                        for(Series series : SearchForm.series){
+                            if(series.getTitle().equals(selectedValue)){
+                                if(GuiController.reviewRatingForm == null){
+                                    SearchResultScreen.currentSeriesSelected = series;
+                                    GuiController.showReviewRatingForm(true);
+                                    GuiController.showViewContentScreen(true);
+
+                                }
+                            }
+                        }
+                    }
+                }
+
             }
         });
 
@@ -74,7 +127,17 @@ public class SearchResultScreen extends JFrame {
         exitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.exit(0);
+
+                GuiController.showLogInForm(true);
+
+                if(GuiController.mainUser.getIsAdmin()){
+                    GuiController.showSeriesRegistrationForm(false);
+                    GuiController.showMovieRegistrationForm(false);
+                }
+
+                GuiController.showSearchScreen(false);
+                GuiController.showSearchResultsScreen(false);
+
             }
         });
         add(exitButton, gbc);
@@ -84,14 +147,39 @@ public class SearchResultScreen extends JFrame {
     }
 
     private void addToFavorites() {
+
         int[] selectedIndices = resultList.getSelectedIndices();
         if (selectedIndices.length > 0) {
+            ArrayList<String> results = new ArrayList<>();
             StringBuilder selectedResults = new StringBuilder();
             for (int index : selectedIndices) {
                 String result = listModel.getElementAt(index);
+                results.add(result);
                 selectedResults.append(result).append("\n");
             }
-            // Add the selected results to favorites (you can implement your logic here)
+
+            if( SearchForm.movies != null){
+                for(String rs: results){
+                    for(Movie movie : SearchForm.movies){
+                        if(movie.getTitle().equals(rs)){
+                            GuiController.mainUser.addNewFavoriteMovie(movie);
+                        }
+                    }
+                }
+            }else if (SearchForm.series != null){
+                for(String rs: results){
+                    for(Series series : SearchForm.series){
+                        if(series.getTitle().equals(rs)){
+                            GuiController.mainUser.addNewFavoriteSeries(series);
+                        }
+                    }
+                }
+            }
+
+            // Refresh the user file with new data
+            FileController.writeUsersToFile(User.UsersList);
+
+            // Display the results
             JOptionPane.showMessageDialog(null, "Added to Favorites:\n" + selectedResults.toString(), "Success", JOptionPane.INFORMATION_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(null, "Please select results to add to favorites.", "Error", JOptionPane.ERROR_MESSAGE);

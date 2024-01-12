@@ -1,3 +1,7 @@
+package gui;
+
+import Controllers.GuiController;
+import api.User;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -51,10 +55,24 @@ public class LoginForm extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String username = usernameField.getText();
                 char[] password = passwordField.getPassword();
-                // Check credentials here and perform necessary actions
-                // For simplicity, just printing the entered username and password
-                System.out.println("Username: " + username);
-                System.out.println("Password: " + new String(password));
+
+                // Call the login method
+                User user = loginUser(username, password);
+
+                if (user == null){
+                    GuiController.showUserRegistrationForm(true);
+                }else{
+                    GuiController.mainUser = user;
+
+                    if(user.getIsAdmin()){
+                        GuiController.showMovieRegistrationForm(true);
+                        GuiController.showSeriesRegistrationForm(true);
+                    }
+                    GuiController.showSearchScreen(true);
+
+                }
+                GuiController.showLogInForm(false);
+
             }
         });
         panel.add(loginButton, gbc);
@@ -64,4 +82,16 @@ public class LoginForm extends JFrame {
         setLocationRelativeTo(null);
     }
 
+
+    public User loginUser(String enteredUsername, char[] enteredPassword) {
+        String password = new String(enteredPassword);
+        clearForm();
+
+        return User.findUser(enteredUsername,password);
+    }
+
+    public void clearForm(){
+        this.usernameField.setText("");
+        this.passwordField.setText("");
+    }
 }

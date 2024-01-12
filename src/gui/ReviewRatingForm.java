@@ -1,7 +1,17 @@
+package gui;
+
+import Controllers.FileController;
+import Controllers.GuiController;
+import api.Movie;
+import api.Review;
+import api.Series;
+import api.User;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public class ReviewRatingForm extends JFrame {
 
@@ -26,7 +36,13 @@ public class ReviewRatingForm extends JFrame {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 7;
-        add(new JLabel("Movie/Series Review and Rating"), gbc);
+
+        if(SearchResultScreen.currentMovieSelected != null){
+            add(new JLabel("Movie "+ SearchResultScreen.currentMovieSelected.getTitle() + " Review and Rating"), gbc);
+
+        }else if (SearchResultScreen.currentSeriesSelected != null) {
+            add(new JLabel("Series "+ SearchResultScreen.currentSeriesSelected.getTitle() + " Review and Rating"), gbc);
+        }
 
         // Comment
         gbc.gridx = 0;
@@ -42,6 +58,8 @@ public class ReviewRatingForm extends JFrame {
         commentTextArea.setLineWrap(true);
         commentTextArea.setColumns(25);
         commentTextArea.setRows(6);
+
+
         JScrollPane scrollPane = new JScrollPane(commentTextArea);
         add(scrollPane, gbc);
 
@@ -64,12 +82,42 @@ public class ReviewRatingForm extends JFrame {
         rating5 = new JRadioButton("5");
         rating5.setFont(new Font("Arial", Font.PLAIN, 18));
 
-        ButtonGroup ratingGroup = new ButtonGroup();
+        ArrayList<JRadioButton>  rb = new ArrayList<>();
+        rb.add(rating1);
+        rb.add(rating2);
+        rb.add(rating3);
+        rb.add(rating4);
+        rb.add(rating5);
+
+        ratingGroup = new ButtonGroup();
         ratingGroup.add(rating1);
         ratingGroup.add(rating2);
         ratingGroup.add(rating3);
         ratingGroup.add(rating4);
         ratingGroup.add(rating5);
+
+        //         already review;
+        if(SearchResultScreen.currentMovieSelected != null){
+
+            for(Review rw : SearchResultScreen.currentMovieSelected.getReviews()){
+                if(rw.getUser().equals(GuiController.mainUser)){
+                    commentTextArea.append(rw.getComments());
+                    rb.get(rw.getRating()).setSelected(true);
+                }
+            }
+
+        }else if (SearchResultScreen.currentSeriesSelected != null) {
+
+
+            for(Review rw : SearchResultScreen.currentSeriesSelected.getReviews()){
+                if(rw.getUser().equals(GuiController.mainUser)){
+                    commentTextArea.append(rw.getComments());
+                    rb.get(rw.getRating()).setSelected(true);
+                }
+            }
+
+        }
+
 
         ratingPanel.add(rating1);
         ratingPanel.add(rating2);
@@ -105,12 +153,14 @@ public class ReviewRatingForm extends JFrame {
         gbc.gridx = 0;
         gbc.gridy = 5;
         gbc.gridwidth = 7;
-        JButton exitButton = new JButton("Exit");
+        JButton exitButton = new JButton("Close");
         exitButton.setFont(new Font("Arial", Font.PLAIN, 18));
         exitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.exit(0);
+                GuiController.showReviewRatingForm(false);
+                GuiController.reviewRatingForm = null;
+
             }
         });
         add(exitButton, gbc);
@@ -140,14 +190,29 @@ public class ReviewRatingForm extends JFrame {
 
     private void handleSubmission() {
         // Submission logic
-        int selectedRating = getSelectedRating();
+        int selectedRating =  getSelectedRating();
         String comment = commentTextArea.getText();
 
-        // Display or store the submitted data
+        if(SearchResultScreen.currentMovieSelected != null){
+            GuiController.mainUser.addMovieReview(SearchResultScreen.currentMovieSelected, selectedRating,comment );
+
+        }else if (SearchResultScreen.currentSeriesSelected != null) {
+            GuiController.mainUser.addSeriesReview(SearchResultScreen.currentSeriesSelected, selectedRating,comment );
+        }
+
+        // Display the submitted data
         JOptionPane.showMessageDialog(null,
                 "Review submitted successfully!\nRating: " + selectedRating + "\nComment: " + comment,
                 "Submission Success", JOptionPane.INFORMATION_MESSAGE);
 
+        // Save data
+
+        FileController.writeUsersToFile(User.UsersList);
+        FileController.writeSeriesToFile(Series.SeriesList);
+        FileController.writeMoviesToFile(Movie.moviesList);
+
+        GuiController.showReviewRatingForm(false);
+        GuiController.reviewRatingForm = null;
         // Clear the form
         clearForm();
     }
