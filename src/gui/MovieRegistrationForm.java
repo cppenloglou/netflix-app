@@ -5,8 +5,6 @@ import api.Admin;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class MovieRegistrationForm extends JFrame {
 
@@ -139,18 +137,17 @@ public class MovieRegistrationForm extends JFrame {
         gbc.gridx = 0;
         gbc.gridy = 9;
         gbc.gridwidth = 3;
+
         JButton submitButton = new JButton("Submit");
+
         submitButton.setFont(new Font("Arial", Font.PLAIN, 18)); // Increase font size
-        submitButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String errorMessage = validateForm();
-                if (errorMessage != null) {
-                    JOptionPane.showMessageDialog(null, errorMessage, "Validation Error", JOptionPane.ERROR_MESSAGE);
-                } else {
-                    // Form is valid, proceed with submission
-                    handleSubmission();
-                }
+        submitButton.addActionListener(e -> {
+            String errorMessage = validateForm();
+            if (errorMessage != null) {
+                JOptionPane.showMessageDialog(null, errorMessage, "Validation Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                // Form is valid, proceed with submission
+                handleSubmission();
             }
         });
         add(submitButton, gbc);
@@ -161,12 +158,7 @@ public class MovieRegistrationForm extends JFrame {
         gbc.gridwidth = 3;
         JButton exitButton = new JButton("Close");
         exitButton.setFont(new Font("Arial", Font.PLAIN, 18)); // Increase font size
-        exitButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                GuiController.showMovieRegistrationForm(false);
-            }
-        });
+        exitButton.addActionListener(e -> GuiController.showMovieRegistrationForm(false));
         add(exitButton, gbc);
 
         pack();
@@ -195,7 +187,7 @@ public class MovieRegistrationForm extends JFrame {
         }
 
         // Validate duration
-        if (durationField.getText().isEmpty() || !isValidDuration(durationField.getText())) {
+        if (durationField.getText().isEmpty() || !isValidDuration()) {
             return "Duration must be in the format 'X', where X is a numeric value.";
         }
 
@@ -207,7 +199,7 @@ public class MovieRegistrationForm extends JFrame {
         return null; // Form is valid
     }
 
-    private boolean isValidDuration(String duration) {
+    private boolean isValidDuration(/*String duration*/) {
         return true;
     }
 
@@ -225,7 +217,6 @@ public class MovieRegistrationForm extends JFrame {
         String title = titleField.getText();
         String description = descriptionTextArea.getText();
         boolean over18 = over18RadioButton.isSelected();
-        boolean no18 = no18RadioButton.isSelected();
         String year = yearField.getText();
         String duration = durationField.getText();
         String category = (String) categoryComboBox.getSelectedItem();

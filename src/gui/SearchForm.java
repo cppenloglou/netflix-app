@@ -6,8 +6,6 @@ import api.Series;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public class SearchForm extends JFrame {
@@ -16,7 +14,9 @@ public class SearchForm extends JFrame {
     public static ArrayList<Series> series;
 
     private JTextField titleField, actorNameField, minRankingField;
-    private JRadioButton movieRadioButton, seriesRadioButton, over18RadioButton, no18RadioButton;
+    private JRadioButton movieRadioButton;
+    private JRadioButton seriesRadioButton;
+    private JRadioButton over18RadioButton;
     private JComboBox<String> genreComboBox;
 
     public SearchForm() {
@@ -98,7 +98,7 @@ public class SearchForm extends JFrame {
         gbc.gridx = 3;
         gbc.gridy = 5;
         gbc.gridwidth = 3;
-        no18RadioButton = new JRadioButton("No");
+        JRadioButton no18RadioButton = new JRadioButton("No");
         no18RadioButton.setFont(new Font("Arial", Font.PLAIN, 18));
         add(no18RadioButton, gbc);
 
@@ -139,12 +139,9 @@ public class SearchForm extends JFrame {
         gbc.gridwidth = 7;
         JButton searchButton = new JButton("Search");
         searchButton.setFont(new Font("Arial", Font.PLAIN, 18));
-        searchButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Implement your search logic here
-                performSearch();
-            }
+        searchButton.addActionListener(e -> {
+            // Implement your search logic here
+            performSearch();
         });
         add(searchButton, gbc);
 
@@ -154,39 +151,36 @@ public class SearchForm extends JFrame {
         gbc.gridwidth = 7;
         JButton exitButton = new JButton("Exit");
         exitButton.setFont(new Font("Arial", Font.PLAIN, 18));
-        exitButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                GuiController.showLogInForm(true);
+        exitButton.addActionListener(e -> {
+            GuiController.showLogInForm(true);
 
 
-                if(GuiController.reviewRatingForm != null  ){
-                    GuiController.showReviewRatingForm(false);
-                }
+            if(GuiController.reviewRatingForm != null  ){
+                GuiController.showReviewRatingForm(false);
+            }
 
 
-                if(GuiController.movieRegistrationForm != null){
-                    GuiController.showMovieRegistrationForm(false);
-                }
+            if(GuiController.movieRegistrationForm != null){
+                GuiController.showMovieRegistrationForm(false);
+            }
 
-                if(GuiController.seriesRegistrationForm != null){
-                    GuiController.showSeriesRegistrationForm(false);
-                }
+            if(GuiController.seriesRegistrationForm != null){
+                GuiController.showSeriesRegistrationForm(false);
+            }
 
-                if(GuiController.viewContentScreen != null){
-                    GuiController.showViewContentScreen(false);
-                }
+            if(GuiController.viewContentScreen != null){
+                GuiController.showViewContentScreen(false);
+            }
 
-                GuiController.showSearchScreen(false);
+            GuiController.showSearchScreen(false);
 
-                if(GuiController.mainUser.getIsAdmin()){
-                    GuiController.showSeriesRegistrationForm(false);
-                    GuiController.showMovieRegistrationForm(false);
-                }
+            if(GuiController.mainUser.getIsAdmin()){
+                GuiController.showSeriesRegistrationForm(false);
+                GuiController.showMovieRegistrationForm(false);
+            }
 
-                if(GuiController.searchResultScreen != null){
-                    GuiController.showSearchResultsScreen(false);
-                }
+            if(GuiController.searchResultScreen != null){
+                GuiController.showSearchResultsScreen(false);
             }
         });
         add(exitButton, gbc);

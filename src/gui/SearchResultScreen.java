@@ -7,18 +7,13 @@ import api.Series;
 import api.User;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public class SearchResultScreen extends JFrame {
 
     private JList<String> resultList;
     private DefaultListModel<String> listModel;
-    private JButton addToFavoriteButton, exitButton;
 
     public static Movie currentMovieSelected;
     public static Series currentSeriesSelected;
@@ -61,41 +56,38 @@ public class SearchResultScreen extends JFrame {
 
         resultList = new JList<>(listModel);
         resultList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        resultList.addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                // Handle selection change
-                if (!e.getValueIsAdjusting()) {
-                    // Retrieve the selected value
-                    String selectedValue = resultList.getSelectedValue();
+        resultList.addListSelectionListener(e -> {
+            // Handle selection change
+            if (!e.getValueIsAdjusting()) {
+                // Retrieve the selected value
+                String selectedValue = resultList.getSelectedValue();
 
-                    if( SearchForm.movies != null){
-                        for(Movie movie : SearchForm.movies) {
-                            if (movie.getTitle().equals(selectedValue)) {
+                if( SearchForm.movies != null){
+                    for(Movie movie : SearchForm.movies) {
+                        if (movie.getTitle().equals(selectedValue)) {
 
-                                if(GuiController.reviewRatingForm == null){
-                                    SearchResultScreen.currentMovieSelected = movie;
-                                    GuiController.showReviewRatingForm(true);
+                            if(GuiController.reviewRatingForm == null){
+                                SearchResultScreen.currentMovieSelected = movie;
+                                GuiController.showReviewRatingForm(true);
 
-                                    GuiController.showViewContentScreen(true);
-                                }
+                                GuiController.showViewContentScreen(true);
                             }
                         }
-                    }else if (SearchForm.series != null){
-                        for(Series series : SearchForm.series){
-                            if(series.getTitle().equals(selectedValue)){
-                                if(GuiController.reviewRatingForm == null){
-                                    SearchResultScreen.currentSeriesSelected = series;
-                                    GuiController.showReviewRatingForm(true);
-                                    GuiController.showViewContentScreen(true);
+                    }
+                }else if (SearchForm.series != null){
+                    for(Series series : SearchForm.series){
+                        if(series.getTitle().equals(selectedValue)){
+                            if(GuiController.reviewRatingForm == null){
+                                SearchResultScreen.currentSeriesSelected = series;
+                                GuiController.showReviewRatingForm(true);
+                                GuiController.showViewContentScreen(true);
 
-                                }
                             }
                         }
                     }
                 }
-
             }
+
         });
 
         JScrollPane scrollPane = new JScrollPane(resultList);
@@ -107,14 +99,9 @@ public class SearchResultScreen extends JFrame {
         gbc.gridwidth = 1;
         gbc.gridheight = 1;
 
-        addToFavoriteButton = new JButton("Add to Favorites");
+        JButton addToFavoriteButton = new JButton("Add to Favorites");
         addToFavoriteButton.setFont(new Font("Arial", Font.PLAIN, 18));
-        addToFavoriteButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                addToFavorites();
-            }
-        });
+        addToFavoriteButton.addActionListener(e -> addToFavorites());
         add(addToFavoriteButton, gbc);
 
         // Exit Button
@@ -122,23 +109,20 @@ public class SearchResultScreen extends JFrame {
         gbc.gridy = 3;
         gbc.gridwidth = 1;
 
-        exitButton = new JButton("Exit");
+        JButton exitButton = new JButton("Exit");
         exitButton.setFont(new Font("Arial", Font.PLAIN, 18));
-        exitButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        exitButton.addActionListener(e -> {
 
-                GuiController.showLogInForm(true);
+            GuiController.showLogInForm(true);
 
-                if(GuiController.mainUser.getIsAdmin()){
-                    GuiController.showSeriesRegistrationForm(false);
-                    GuiController.showMovieRegistrationForm(false);
-                }
-
-                GuiController.showSearchScreen(false);
-                GuiController.showSearchResultsScreen(false);
-
+            if(GuiController.mainUser.getIsAdmin()){
+                GuiController.showSeriesRegistrationForm(false);
+                GuiController.showMovieRegistrationForm(false);
             }
+
+            GuiController.showSearchScreen(false);
+            GuiController.showSearchResultsScreen(false);
+
         });
         add(exitButton, gbc);
 
@@ -180,7 +164,7 @@ public class SearchResultScreen extends JFrame {
             FileController.writeUsersToFile(User.UsersList);
 
             // Display the results
-            JOptionPane.showMessageDialog(null, "Added to Favorites:\n" + selectedResults.toString(), "Success", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Added to Favorites:\n" + selectedResults, "Success", JOptionPane.INFORMATION_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(null, "Please select results to add to favorites.", "Error", JOptionPane.ERROR_MESSAGE);
         }

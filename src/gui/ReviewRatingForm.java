@@ -9,8 +9,6 @@ import api.User;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public class ReviewRatingForm extends JFrame {
@@ -136,15 +134,12 @@ public class ReviewRatingForm extends JFrame {
         gbc.gridwidth = 7;
         JButton submitButton = new JButton("Submit");
         submitButton.setFont(new Font("Arial", Font.PLAIN, 18));
-        submitButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String errorMessage = validateForm();
-                if (errorMessage != null) {
-                    JOptionPane.showMessageDialog(null, errorMessage, "Validation Error", JOptionPane.ERROR_MESSAGE);
-                } else {
-                    handleSubmission();
-                }
+        submitButton.addActionListener(e -> {
+            String errorMessage = validateForm();
+            if (errorMessage != null) {
+                JOptionPane.showMessageDialog(null, errorMessage, "Validation Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                handleSubmission();
             }
         });
         add(submitButton, gbc);
@@ -155,13 +150,10 @@ public class ReviewRatingForm extends JFrame {
         gbc.gridwidth = 7;
         JButton exitButton = new JButton("Close");
         exitButton.setFont(new Font("Arial", Font.PLAIN, 18));
-        exitButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                GuiController.showReviewRatingForm(false);
-                GuiController.reviewRatingForm = null;
+        exitButton.addActionListener(e -> {
+            GuiController.showReviewRatingForm(false);
+            GuiController.reviewRatingForm = null;
 
-            }
         });
         add(exitButton, gbc);
 

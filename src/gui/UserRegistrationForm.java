@@ -7,11 +7,6 @@ import api.User;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 
 public class UserRegistrationForm extends JFrame {
 
@@ -81,12 +76,7 @@ public class UserRegistrationForm extends JFrame {
         gbc.gridwidth = 2;
         JButton submitButton = new JButton("Submit");
         submitButton.setFont(new Font("Arial", Font.PLAIN, 18));
-        submitButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                submitForm();
-            }
-        });
+        submitButton.addActionListener(e -> submitForm());
         add(submitButton, gbc);
 
         pack();
@@ -108,13 +98,13 @@ public class UserRegistrationForm extends JFrame {
 
             if(userFound == null){
                 // Create the user
-                User newSub = new Sub(name, middleName, username, password);
+                new Sub(name, middleName, username, password);
 
                 FileController.writeUsersToFile(User.UsersList);
 
                 // Successful Message !
                 String message = String.format("Registration successful!\nName: %s %s\nUsername: %s\n",
-                        name, middleName, username, password);
+                        name, middleName, username);
                 JOptionPane.showMessageDialog(null, message, "Registration Success", JOptionPane.INFORMATION_MESSAGE);
 
                 GuiController.showUserRegistrationForm(false);
@@ -126,8 +116,7 @@ public class UserRegistrationForm extends JFrame {
                 GuiController.showUserRegistrationForm(false);
 
                 // Successful Message !
-                String message = String.format("Registration failed! User already exist",
-                        name, middleName, username, password);
+                String message = "Registration failed! User already exist";
                 JOptionPane.showMessageDialog(null, message, "Registration Failed", JOptionPane.INFORMATION_MESSAGE);
             }
 
@@ -144,13 +133,4 @@ public class UserRegistrationForm extends JFrame {
         passwordField.setText("");
     }
 
-    private void addUserToFile( String firstName, String middleName, String username, String password) {
-        try (PrintWriter writer = new PrintWriter(new FileWriter("users.dat", true))) {
-            // Append a new user record to the file
-            writer.println(firstName + "," + middleName + "," + username + "," + password);
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println("Error adding user to the file.");
-        }
-    }
 }

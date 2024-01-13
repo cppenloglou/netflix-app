@@ -6,8 +6,6 @@ import api.Season;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class SeriesRegistrationForm extends JFrame {
 
@@ -178,15 +176,12 @@ public class SeriesRegistrationForm extends JFrame {
         gbc.gridwidth = 3;
         JButton submitButton = new JButton("Submit");
         submitButton.setFont(new Font("Arial", Font.PLAIN, 18));
-        submitButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String errorMessage = validateForm();
-                if (errorMessage != null) {
-                    JOptionPane.showMessageDialog(null, errorMessage, "Validation Error", JOptionPane.ERROR_MESSAGE);
-                } else {
-                    handleSubmission();
-                }
+        submitButton.addActionListener(e -> {
+            String errorMessage = validateForm();
+            if (errorMessage != null) {
+                JOptionPane.showMessageDialog(null, errorMessage, "Validation Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                handleSubmission();
             }
         });
         add(submitButton, gbc);
@@ -197,12 +192,7 @@ public class SeriesRegistrationForm extends JFrame {
         gbc.gridwidth = 3;
         JButton exitButton = new JButton("Close");
         exitButton.setFont(new Font("Arial", Font.PLAIN, 18));
-        exitButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                GuiController.showSeriesRegistrationForm(false);
-            }
-        });
+        exitButton.addActionListener(e -> GuiController.showSeriesRegistrationForm(false));
         add(exitButton, gbc);
 
         pack();
@@ -245,15 +235,15 @@ public class SeriesRegistrationForm extends JFrame {
 
         return null; // Form is valid
     }
-    private String validateEpisodeForm() {
-        // Validate the episode-specific fields
-        if (episodeComboBox.getSelectedIndex() == 0) {
-            return "Episode selection is required.";
-        }
-
-
-        return null; // Episode form is valid
-    }
+//    private String validateEpisodeForm() {
+//        // Validate the episode-specific fields
+//        if (episodeComboBox.getSelectedIndex() == 0) {
+//            return "Episode selection is required.";
+//        }
+//
+//
+//        return null; // Episode form is valid
+//    }
 
     private boolean isNumeric(String str) {
         try {
@@ -269,7 +259,6 @@ public class SeriesRegistrationForm extends JFrame {
         String title = titleField.getText();
         String description = descriptionTextArea.getText();
         boolean over18 = over18RadioButton.isSelected();
-        boolean no18 = no18RadioButton.isSelected();
         int year = Integer.parseInt(yearField.getText());
         String category = (String) categoryComboBox.getSelectedItem();
         String actors = starringTextField.getText();
@@ -282,10 +271,10 @@ public class SeriesRegistrationForm extends JFrame {
         clearForm();
     }
 
-    private void handleEpisodeSubmission() {
-        // Αυτη ειναι η συναρτηση αποθηκευσης για το επισοδειο
-        JOptionPane.showMessageDialog(null, "Episode submitted successfully!", "Submission Success", JOptionPane.INFORMATION_MESSAGE);
-    }
+//    private void handleEpisodeSubmission() {
+//        // Αυτη ειναι η συναρτηση αποθηκευσης για το επισοδειο
+//        JOptionPane.showMessageDialog(null, "Episode submitted successfully!", "Submission Success", JOptionPane.INFORMATION_MESSAGE);
+//    }
 
     private void clearForm() {
         titleField.setText("");

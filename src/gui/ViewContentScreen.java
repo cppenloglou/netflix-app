@@ -5,23 +5,15 @@ import api.Review;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Locale;
+import java.util.Objects;
 
 public class ViewContentScreen extends JFrame {
 
     private JTextArea contentArea;
     private JTextArea reviewsArea;
-    private JButton submitReviewButton;
-    private JButton deleteButton;
-    private JButton editButton;
-    private JButton moviesButton;
-    private JButton seriesButton;
 
-    private boolean isAdmin; // Set to true for administrator, false for a simple viewer
+    private final boolean isAdmin; // Set to true for administrator, false for a simple viewer
 
     public ViewContentScreen(boolean isAdmin) {
         this.isAdmin = isAdmin;
@@ -38,39 +30,33 @@ public class ViewContentScreen extends JFrame {
 
         if(SearchResultScreen.currentMovieSelected != null){
             // Button to switch to Movies
-            moviesButton = new JButton("View Movies");
+            JButton moviesButton = new JButton("View Movies");
             buttonPanel.add(moviesButton);
 
-            moviesButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    // Display movie details
-                    showMovieDetails();
-                    showReviews(getMovieReviews());
-                }
+            moviesButton.addActionListener(e -> {
+                // Display movie details
+                showMovieDetails();
+                showReviews(Objects.requireNonNull(getMovieReviews()));
             });
         }
 
         if(SearchResultScreen.currentSeriesSelected != null){
             // Button to switch to Series
-            seriesButton = new JButton("View Series");
+            JButton seriesButton = new JButton("View Series");
             buttonPanel.add(seriesButton);
 
-            seriesButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    // Display series details
-                    showSeriesDetails();
-                    showReviews(getSeriesReviews());
-                }
+            seriesButton.addActionListener(e -> {
+                // Display series details
+                showSeriesDetails();
+                showReviews(Objects.requireNonNull(getSeriesReviews()));
             });
         }
 
 
         // Buttons for submitting reviews, deleting, and editing
-        submitReviewButton = new JButton("Submit Review");
-        deleteButton = new JButton("Delete");
-        editButton = new JButton("Edit");
+        JButton submitReviewButton = new JButton("Submit Review");
+        JButton deleteButton = new JButton("Delete");
+        JButton editButton = new JButton("Edit");
 
         // Set visibility based on user role
         submitReviewButton.setVisible(!isAdmin);
@@ -82,32 +68,19 @@ public class ViewContentScreen extends JFrame {
         buttonPanel.add(editButton);
         add(buttonPanel, BorderLayout.SOUTH);
 
-
-
-
-
-        submitReviewButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Handle submitting a review
-                submitReview();
-            }
+        submitReviewButton.addActionListener(e -> {
+            // Handle submitting a review
+            submitReview();
         });
 
-        deleteButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Handle deleting movie or series (for administrators)
-                deleteContent();
-            }
+        deleteButton.addActionListener(e -> {
+            // Handle deleting movie or series (for administrators)
+            deleteContent();
         });
 
-        editButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Handle editing movie or series (for administrators)
-                editContent();
-            }
+        editButton.addActionListener(e -> {
+            // Handle editing movie or series (for administrators)
+            editContent();
         });
 
         // Text area to display content details
@@ -155,10 +128,9 @@ public class ViewContentScreen extends JFrame {
         if (SearchResultScreen.currentSeriesSelected != null){
             double averageRating = SearchResultScreen.currentSeriesSelected.getRating();
 
-            StringBuilder seriesDetails = new StringBuilder();
-            seriesDetails.append("Title: ").append(SearchResultScreen.currentSeriesSelected.getTitle()).append("\nDescription: ").append(SearchResultScreen.currentSeriesSelected.getDescription())
-                    .append("\nMature: ").append(SearchResultScreen.currentSeriesSelected.getIsOver18() ? "Yes" : "No").append("\nStarring Actors: ")
-                    .append(SearchResultScreen.currentSeriesSelected.getActors()).append("\n");
+            String seriesDetails = "Title: " + SearchResultScreen.currentSeriesSelected.getTitle() + "\nDescription: " + SearchResultScreen.currentSeriesSelected.getDescription() +
+                    "\nMature: " + (SearchResultScreen.currentSeriesSelected.getIsOver18() ? "Yes" : "No") + "\nStarring Actors: " +
+                    SearchResultScreen.currentSeriesSelected.getActors() + "\n" +
 
 //            for (Map.Entry<Integer, Integer> entry : series.episodesPerSeason.entrySet()) {
 //                int seasonNumber = entry.getKey();
@@ -170,9 +142,9 @@ public class ViewContentScreen extends JFrame {
 //                        .append("\nDuration per Episode: ").append(durationPerEpisode).append(" minutes");
 //            }
 
-            seriesDetails.append("\n\nAverage Rating: ").append(averageRating);
+                    "\n\nAverage Rating: " + averageRating;
 
-            contentArea.setText(seriesDetails.toString());
+            contentArea.setText(seriesDetails);
         }
 
 
@@ -194,11 +166,10 @@ public class ViewContentScreen extends JFrame {
     }
 
     private void showReviews(List<Review> reviews) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss", Locale.getDefault());
         StringBuilder reviewsText = new StringBuilder();
         for (Review review : reviews) {
             reviewsText.append("\n\nRating: ").append(review.getRating())
-                    .append("\nReviewer: ").append(review.getUser().getUname())
+                    .append("\nReviewer: ").append(review.getUser().getUsername())
                     .append("\nReview: ").append(review.getComments());
         }
         reviewsArea.setText(reviewsText.toString());

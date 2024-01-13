@@ -14,10 +14,6 @@ public class FileController {
     private static final String seriesFilename = "series.ser";
     private static final String usersFilename = "users.ser";
 
-
-
-    //    File Functions
-
     // Function to write Movie objects to a file
     public static void writeMoviesToFile(ArrayList<Movie> movies) {
 
@@ -25,8 +21,7 @@ public class FileController {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FileController.moviesFilename))) {
             oos.writeObject(movies);
             System.out.println("Movies have been written to " + FileController.moviesFilename);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ignored) {
         }
     }
 
@@ -40,8 +35,9 @@ public class FileController {
             try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
                 movies = (ArrayList<Movie>) ois.readObject();
                 System.out.println("Movies have been read from " + FileController.moviesFilename);
-            } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
+            } catch (IOException ignored) {
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
             }
         } else {
             System.out.println("File does not exist. Creating an empty file.");
@@ -57,8 +53,7 @@ public class FileController {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FileController.seriesFilename))) {
             oos.writeObject(seriesList);
             System.out.println("Series have been written to " + FileController.seriesFilename);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ignored) {
         }
     }
 
@@ -72,8 +67,9 @@ public class FileController {
             try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
                 seriesList = (ArrayList<Series>) ois.readObject();
                 System.out.println("Series have been read from " + seriesFilename);
-            } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
+            } catch (IOException ignored) {
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
             }
         } else {
             System.out.println("File does not exist. Creating an empty file.");
@@ -89,8 +85,7 @@ public class FileController {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(usersFilename))) {
             oos.writeObject(userList);
             System.out.println("Users have been written to " + usersFilename);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ignored) {
         }
     }
 
@@ -105,8 +100,7 @@ public class FileController {
             try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
                 userList = (ArrayList<User>) ois.readObject();
                 System.out.println("Users have been read from " + usersFilename);
-            } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
+            } catch (IOException | ClassNotFoundException ignored) {
             }
         } else {
             System.out.println("File does not exist. Creating an empty file.");
@@ -135,7 +129,7 @@ public class FileController {
         season2.addEpisode(new Episode(30));
 
 //        Default Series
-        Series series1 = new Series(admin2, "Big Bang Theory", "Desc2", true, "Sci=Fi", "Johnny Galecki, ames Joseph Parsons", 5.0);
+        Series series1 = new Series(admin2, "Big Bang Theory", "Desc2", true, "Sci=Fi", "Johnny Galerkin, ames Joseph Parsons", 5.0);
         series1.addSeason(season1);
 
 //        ADD DEFAULT DATA
