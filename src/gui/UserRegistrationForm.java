@@ -1,7 +1,12 @@
+package gui;
+
+import Controllers.FileController;
+import Controllers.GuiController;
+import api.Sub;
+import api.User;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class UserRegistrationForm extends JFrame {
 
@@ -71,12 +76,7 @@ public class UserRegistrationForm extends JFrame {
         gbc.gridwidth = 2;
         JButton submitButton = new JButton("Submit");
         submitButton.setFont(new Font("Arial", Font.PLAIN, 18));
-        submitButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                submitForm();
-            }
-        });
+        submitButton.addActionListener(e -> submitForm());
         add(submitButton, gbc);
 
         pack();
@@ -93,12 +93,33 @@ public class UserRegistrationForm extends JFrame {
         if (name.isEmpty() || middleName.isEmpty() || username.isEmpty() || password.isEmpty()) {
             JOptionPane.showMessageDialog(null, "All fields are required.", "Error", JOptionPane.ERROR_MESSAGE);
         } else {
-            // You can implement your registration logic here
-            // For example, display or store the registered user data
-            String message = String.format("Registration successful!\nName: %s %s\nUsername: %s\nPassword: %s",
-                    name, middleName, username, password);
 
-            JOptionPane.showMessageDialog(null, message, "Registration Success", JOptionPane.INFORMATION_MESSAGE);
+            User userFound = User.findUser(username,password);
+
+            if(userFound == null){
+                // Create the user
+                new Sub(name, middleName, username, password);
+
+                FileController.writeUsersToFile(User.UsersList);
+
+                // Successful Message !
+                String message = String.format("Registration successful!\nName: %s %s\nUsername: %s\n",
+                        name, middleName, username);
+                JOptionPane.showMessageDialog(null, message, "Registration Success", JOptionPane.INFORMATION_MESSAGE);
+
+                GuiController.showUserRegistrationForm(false);
+                GuiController.showLogInForm(true);
+
+            }else {
+                // User exist
+                GuiController.showLogInForm(true);
+                GuiController.showUserRegistrationForm(false);
+
+                // Successful Message !
+                String message = "Registration failed! User already exist";
+                JOptionPane.showMessageDialog(null, message, "Registration Failed", JOptionPane.INFORMATION_MESSAGE);
+            }
+
 
             // Clear the form after submission
             clearForm();

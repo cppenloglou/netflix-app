@@ -3,13 +3,15 @@ package api;
 import Controllers.FileController;
 
 import java.io.Serializable;
-import java.util.Scanner;
 public class Admin extends User implements Serializable {
-    public Admin(String name, String sname, String uname, String pass) {
-        super(name, sname, uname, pass);
+    public Admin(String name, String lastname, String username, String password) {
+        super(name, lastname, username, password);
         this.isAdmin = true;
-        scan = new Scanner(System.in);
     }
+
+    @Override
+    public void delete() {}
+
     public void createMovie(Admin user, String title, String desc, Boolean isOver18, String category, String fyear, String duration, String actors, Double rating){
         Movie mv = new Movie(user,  title, desc,  isOver18, category,  Integer.parseInt(fyear),  Integer.parseInt(duration),  actors,  rating);
 

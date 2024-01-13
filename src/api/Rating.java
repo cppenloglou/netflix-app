@@ -3,10 +3,10 @@ package api;
 import java.io.Serializable;
 
 public class Rating implements Serializable {
-    User user;
-    Movie movie;
-    Series series;
-    Double rating;
+    private User user;
+    private Movie movie;
+    private Series series;
+    private Double rating;
 
     public Rating(User user , Movie movie, Double rating){
         this.user = user;

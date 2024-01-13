@@ -1,12 +1,9 @@
 package api;
 
-import java.util.ArrayList;
-import java.util.Scanner;
 import java.io.Serializable;
-
+import java.util.ArrayList;
 
 public class Movie implements Serializable {
-    transient Scanner scan;
     private String title, desc, category;
     private Boolean isOver18;
     private String actors;
@@ -31,7 +28,6 @@ public class Movie implements Serializable {
         this.rating = rating;
         this.ratings = new ArrayList<>();
         this.ratings.add(rating);
-        scan = new Scanner(System.in);
 
         //Καθε φορα που δημιουργειτε μια ταινια αυτοματα αποθηκευεται σε αυτη την λιστα, ή οποια επειδη ειναι static ολα τα αντικειμενα εχουν προσβαση σε αυτη.
         Movie.moviesList.add(this);

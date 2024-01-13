@@ -8,5 +8,4 @@ public class Episode implements Serializable {
         this.duration = duration;
     }
 
-    public int getDuration(){return duration;}
 }

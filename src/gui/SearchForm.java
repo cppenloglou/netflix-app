@@ -1,12 +1,22 @@
+package gui;
+
+import Controllers.GuiController;
+import api.Movie;
+import api.Series;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public class SearchForm extends JFrame {
 
+    public static ArrayList<Movie> movies;
+    public static ArrayList<Series> series;
+
     private JTextField titleField, actorNameField, minRankingField;
-    private JRadioButton movieRadioButton, seriesRadioButton, over18RadioButton, no18RadioButton;
+    private JRadioButton movieRadioButton;
+    private JRadioButton seriesRadioButton;
+    private JRadioButton over18RadioButton;
     private JComboBox<String> genreComboBox;
 
     public SearchForm() {
@@ -88,7 +98,7 @@ public class SearchForm extends JFrame {
         gbc.gridx = 3;
         gbc.gridy = 5;
         gbc.gridwidth = 3;
-        no18RadioButton = new JRadioButton("No");
+        JRadioButton no18RadioButton = new JRadioButton("No");
         no18RadioButton.setFont(new Font("Arial", Font.PLAIN, 18));
         add(no18RadioButton, gbc);
 
@@ -129,12 +139,9 @@ public class SearchForm extends JFrame {
         gbc.gridwidth = 7;
         JButton searchButton = new JButton("Search");
         searchButton.setFont(new Font("Arial", Font.PLAIN, 18));
-        searchButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Implement your search logic here
-                performSearch();
-            }
+        searchButton.addActionListener(e -> {
+            // Implement your search logic here
+            performSearch();
         });
         add(searchButton, gbc);
 
@@ -144,10 +151,36 @@ public class SearchForm extends JFrame {
         gbc.gridwidth = 7;
         JButton exitButton = new JButton("Exit");
         exitButton.setFont(new Font("Arial", Font.PLAIN, 18));
-        exitButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
+        exitButton.addActionListener(e -> {
+            GuiController.showLogInForm(true);
+
+
+            if(GuiController.reviewRatingForm != null  ){
+                GuiController.showReviewRatingForm(false);
+            }
+
+
+            if(GuiController.movieRegistrationForm != null){
+                GuiController.showMovieRegistrationForm(false);
+            }
+
+            if(GuiController.seriesRegistrationForm != null){
+                GuiController.showSeriesRegistrationForm(false);
+            }
+
+            if(GuiController.viewContentScreen != null){
+                GuiController.showViewContentScreen(false);
+            }
+
+            GuiController.showSearchScreen(false);
+
+            if(GuiController.mainUser.getIsAdmin()){
+                GuiController.showSeriesRegistrationForm(false);
+                GuiController.showMovieRegistrationForm(false);
+            }
+
+            if(GuiController.searchResultScreen != null){
+                GuiController.showSearchResultsScreen(false);
             }
         });
         add(exitButton, gbc);
@@ -157,12 +190,33 @@ public class SearchForm extends JFrame {
     }
 
     private void performSearch() {
-        // Implement your search logic here
-        // You can access the entered values using titleField.getText(), actorNameField.getText(), etc.
-        // Perform the search based on the entered criteria
-        // Display the search results or take appropriate action
-        JOptionPane.showMessageDialog(null, "Performing search...", "Search Info", JOptionPane.INFORMATION_MESSAGE);
-    }
 
-    
+        // Text fields
+        String title = titleField.getText();
+        String actorName = actorNameField.getText();
+        String minRanking = minRankingField.getText();
+
+        // Radio buttons
+        boolean isMovie = movieRadioButton.isSelected();
+        boolean isSeries = seriesRadioButton.isSelected();
+        boolean isOver18 = over18RadioButton.isSelected();
+
+        // Combo box
+        String selectedGenre = (String) genreComboBox.getSelectedItem();
+
+
+        if(isMovie){
+            SearchForm.movies =  Movie.searchMovies(title,actorName,minRanking,isOver18,selectedGenre);
+            SearchForm.series = null;
+            GuiController.showSearchResultsScreen(true);
+        }else if(isSeries){
+            SearchForm.series = Series.searchSeries(title,actorName,minRanking,isOver18,selectedGenre);
+            SearchForm.movies = null;
+            GuiController.showSearchResultsScreen(true);
+        }else{
+            JOptionPane.showMessageDialog(null, "Search Error", "Movies or Series", JOptionPane.INFORMATION_MESSAGE);
+
+        }
+
+    }
 }

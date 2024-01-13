@@ -1,11 +1,9 @@
 package api;
 
-import java.util.ArrayList;
-import java.util.Scanner;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class Series implements Serializable {
-    transient Scanner scan;
     private String title, desc, category;
     private boolean isOver18;
     private String actors;
@@ -28,7 +26,6 @@ public class Series implements Serializable {
         this.rating = rating;
         this.ratings = new ArrayList<>();
         this.ratings.add(rating);
-        scan = new Scanner(System.in);
 
         Series.SeriesList.add(this);
 
@@ -42,10 +39,6 @@ public class Series implements Serializable {
 
     public String getTitle() {
         return title;
-    }
-
-    public String getDesc() {
-        return desc;
     }
 
     public String getCategory() {

@@ -1,7 +1,10 @@
+package gui;
+
+import Controllers.GuiController;
+import api.Admin;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class MovieRegistrationForm extends JFrame {
 
@@ -48,8 +51,8 @@ public class MovieRegistrationForm extends JFrame {
         gbc.gridwidth = 7;
         descriptionTextArea = new JTextArea();
         descriptionTextArea.setFont(new Font("Arial", Font.PLAIN, 18)); // Increase font size
-        descriptionTextArea.setRows(5);  // Set the number of rows
-        descriptionTextArea.setColumns(30);  // Set the number of columns
+        descriptionTextArea.setRows(5); // Set the number of rows
+        descriptionTextArea.setColumns(30); // Set the number of columns
         JScrollPane scrollPane = new JScrollPane(descriptionTextArea);
         add(scrollPane, gbc);
 
@@ -112,7 +115,7 @@ public class MovieRegistrationForm extends JFrame {
         gbc.gridx = 1;
         gbc.gridy = 7;
         gbc.gridwidth = 6;
-        String[] categories = {"Select", "Horror", "Drama", "Sci-Fi", "Comedy", "Action"};
+        String[] categories = { "Select", "Horror", "Drama", "Sci-Fi", "Comedy", "Action" };
         categoryComboBox = new JComboBox<>(categories);
         categoryComboBox.setFont(new Font("Arial", Font.PLAIN, 18)); // Increase font size
         add(categoryComboBox, gbc);
@@ -134,18 +137,17 @@ public class MovieRegistrationForm extends JFrame {
         gbc.gridx = 0;
         gbc.gridy = 9;
         gbc.gridwidth = 3;
+
         JButton submitButton = new JButton("Submit");
+
         submitButton.setFont(new Font("Arial", Font.PLAIN, 18)); // Increase font size
-        submitButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String errorMessage = validateForm();
-                if (errorMessage != null) {
-                    JOptionPane.showMessageDialog(null, errorMessage, "Validation Error", JOptionPane.ERROR_MESSAGE);
-                } else {
-                    // Form is valid, proceed with submission
-                    handleSubmission();
-                }
+        submitButton.addActionListener(e -> {
+            String errorMessage = validateForm();
+            if (errorMessage != null) {
+                JOptionPane.showMessageDialog(null, errorMessage, "Validation Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                // Form is valid, proceed with submission
+                handleSubmission();
             }
         });
         add(submitButton, gbc);
@@ -154,14 +156,9 @@ public class MovieRegistrationForm extends JFrame {
         gbc.gridx = 4;
         gbc.gridy = 9;
         gbc.gridwidth = 3;
-        JButton exitButton = new JButton("Exit");
+        JButton exitButton = new JButton("Close");
         exitButton.setFont(new Font("Arial", Font.PLAIN, 18)); // Increase font size
-        exitButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
-        });
+        exitButton.addActionListener(e -> GuiController.showMovieRegistrationForm(false));
         add(exitButton, gbc);
 
         pack();
@@ -173,42 +170,38 @@ public class MovieRegistrationForm extends JFrame {
         if (titleField.getText().isEmpty()) {
             return "Title is required.";
         }
-    
+
         // Validate description
         if (descriptionTextArea.getText().isEmpty()) {
             return "Description is required.";
         }
-    
+
         // Validate maturity
         if (!over18RadioButton.isSelected() && !no18RadioButton.isSelected()) {
             return "Maturity selection is required.";
         }
-    
+
         // Validate year
         if (yearField.getText().isEmpty() || !isNumeric(yearField.getText())) {
             return "Year must be a numeric value.";
         }
-    
+
         // Validate duration
-        if (durationField.getText().isEmpty() || !isValidDuration(durationField.getText())) {
-            return "Duration must be in the format 'X minutes', where X is a numeric value.";
+        if (durationField.getText().isEmpty() || !isValidDuration()) {
+            return "Duration must be in the format 'X', where X is a numeric value.";
         }
-    
+
         // Validate category
         if (categoryComboBox.getSelectedIndex() == 0) {
             return "Category selection is required.";
         }
-    
+
         return null; // Form is valid
     }
-    
-    private boolean isValidDuration(String duration) {
-        // Validate duration format (e.g., "15 minutes")
-        String[] parts = duration.split("\\s+");
-        return parts.length == 2 && isNumeric(parts[0]) && "minutes".equalsIgnoreCase(parts[1]);
+
+    private boolean isValidDuration(/*String duration*/) {
+        return true;
     }
-    
-    
 
     private boolean isNumeric(String str) {
         try {
@@ -220,11 +213,24 @@ public class MovieRegistrationForm extends JFrame {
     }
 
     private void handleSubmission() {
-        // Add your submission logic here
-        // Retrieve values from fields: titleField.getText(), maturity (over18RadioButton.isSelected()), etc.
-        JOptionPane.showMessageDialog(null, "Form submitted successfully!", "Submission Success", JOptionPane.INFORMATION_MESSAGE);
+
+        String title = titleField.getText();
+        String description = descriptionTextArea.getText();
+        boolean over18 = over18RadioButton.isSelected();
+        String year = yearField.getText();
+        String duration = durationField.getText();
+        String category = (String) categoryComboBox.getSelectedItem();
+
+        String actors = starringTextField.getText();
+
+//Create new Movie
+        GuiController.mainUser.createMovie((Admin)GuiController.mainUser, title, description, over18, category, year, duration, actors, 0.0);
+
+        JOptionPane.showMessageDialog(null, "Form submitted successfully!", "Submission Success",
+                JOptionPane.INFORMATION_MESSAGE);
         clearForm(); // Optional: Clear the form after successful submission
     }
+
 
     private void clearForm() {
         titleField.setText("");
